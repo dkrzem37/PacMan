@@ -2,13 +2,29 @@ import javax.swing.table.AbstractTableModel;
 import java.util.Vector;
 
 public class PlanszaGry extends AbstractTableModel {
+
+    /*private Object[][] pola ={
+        {3, 2, 3, 1, 1, 1, 1, 1, 1, 1},
+        {4, 5, 6, 2, 2, 2, 3, 2, 2, 2},
+        {4, 5, 6, 2, 2, 2, 2, 2, 2, 2},
+        {4, 5, 6, 2, 2, 2, 2, 2, 2, 2},
+        {4, 5, 6, 2, 2, 2, 2, 2, 2, 2},
+        {4, 5, 6, 2, 2, 2, 2, 2, 2, 2},
+        {4, 5, 6, 2, 2, 2, 2, 2, 2, 2},
+        {4, 5, 6, 2, 2, 2, 2, 2, 2, 2},
+        {4, 5, 6, 2, 2, 2, 2, 2, 2, 2},
+        {7, 8, 9, 9, 9, 9, 9, 9, 9, 9}
+
+    };*/
     private Object[][] pola;
     //private String[] kolumny;
 
-    public PlanszaGry(Object[][] pola){
-        this.pola = pola;
+    public PlanszaGry(int size){
+        this.pola  = new Object[size][size];
         //this.kolumny = kolumny;
+
     }
+
     @Override
     public int getRowCount() {
         return pola.length;
