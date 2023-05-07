@@ -2,27 +2,38 @@ import javax.swing.*;
 import java.awt.*;
 
 public class OknoGry extends JFrame {
+    private int width, height;
+    public static int score = 0;
+    public static int lives = 3;
+    public static JLabel scoreLabel;
+    public static JLabel timeLabel;
+    public static JLabel lifeLabel;
     public OknoGry(){
         generateOknoGry();
     }
     public void generateOknoGry(){
-        JLabel scoreLabel = new JLabel("Score:");
-        JLabel timeLabel = new JLabel("Time:");
-        JLabel lifeLabel = new JLabel("Lives:");
+        this.width = 714;
+        this.height = 787;
+        OknoGry.lives = 3;
+        OknoGry.score = 0;
+        scoreLabel = new JLabel("Score:" + score);
+        timeLabel = new JLabel("Time:");
+        lifeLabel = new JLabel("Lives: " + lives);
 
         JPanel jPanel = new JPanel();
         jPanel.add(scoreLabel);
         jPanel.add(timeLabel);
         jPanel.add(lifeLabel);
-        jPanel.setPreferredSize(new Dimension(750, 50));
+        jPanel.setPreferredSize(new Dimension(width, 50));
         jPanel.setLayout(new GridLayout());
 
-        JPanel jPanel1 = new PoleGry();
+        //JPanel jPanel1 = new PoleGry();
+        JTable jTable = new GameBoard(13);
 
-        this.getContentPane().add(jPanel1, BorderLayout.CENTER);
+        this.getContentPane().add(jTable, BorderLayout.CENTER);
         this.getContentPane().add(jPanel, BorderLayout.PAGE_END);
 
-        setSize(750, 800);
+        setSize(width, height);
         setVisible(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
