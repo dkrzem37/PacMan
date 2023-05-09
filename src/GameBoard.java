@@ -3,6 +3,7 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 import java.util.HashSet;
 
 public class GameBoard extends JTable implements Runnable, KeyListener {
@@ -10,11 +11,15 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
     PacMan pacMan;
     private int height, width,size;
     private int numberOfEdibles = 0;
+    OknoGry oG;
+    public boolean checkForGameEnd;
 
 
-    public GameBoard(int size){
+    public GameBoard(int size, OknoGry oG){
         super(new PlanszaGry(size));
+        checkForGameEnd = false;
 
+        this.oG = oG;
 
         this.width = width;
         this.height = height;
@@ -48,6 +53,13 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
 
     @Override
     public void run() {
+        /*pacMan.setX(700 / this.getSize1() + 10);
+        pacMan.setY(700 / this.getSize1() + 10);
+
+        for(int i = 0; i< Enemy.enemies.length; i++){
+            Enemy.enemies[i].setX(595);
+            Enemy.enemies[i].setY(585);
+        }
         try{
             for(int i = 3; i>0; i--) {
                 System.out.println(i);
@@ -55,12 +67,17 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
             }
         }catch(Exception e){
             e.printStackTrace();
-        }
-        /*for(int i = 0; i< Enemy.enemies.length; i++){
-            Enemy.enemies[i].setX(Edible.edibleArray[this.getSize1() - 3][this.getSize1() - 3].getX());
-            Enemy.enemies[i].setY(Edible.edibleArray[this.getSize1() - 3][this.getSize1() - 3].getY());
         }*/
-        while(thread != null){
+
+
+        for(int i = 0; i< Enemy.enemies.length; i++){
+            Enemy.enemies[i].setX(Edible.edibleArray[this.getSize1() - 2][this.getSize1() - 2].getX());
+            Enemy.enemies[i].setY(Edible.edibleArray[this.getSize1() - 2][this.getSize1() - 2].getY());
+        }
+        while(!Thread.interrupted()){ //thread != null
+            /*if(Thread.interrupted()){
+                break;
+            }*/
 
             //System.out.println(this.getWidth());
             //System.out.println("test");
@@ -68,8 +85,8 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
             repaint();
             try{
                 Thread.sleep(10);
-            }catch(Exception e){
-
+            }catch(InterruptedException e){
+                break;
             }
             setRowHeight(this.getHeight()/size);
             /*for (int x = 0; x < this.getColumnCount(); ++x) {
@@ -77,7 +94,8 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
                 //col.setPreferredWidth(1000);
                 col.setWidth(700/size);
             }*/
-            if(checkForGameEnd()){
+            checkForGameEnd = checkForGameEnd();
+            if(checkForGameEnd){
                 gameEnd();
                 break;
             }
@@ -159,6 +177,14 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
     }
     public void gameEnd(){
         System.out.println("GAME ENDED");
+        oG.saveScore();
+    }
+    public void resetBoard(){
+        thread.interrupt();
+
+
+        this.thread = new Thread(this);
+        thread.start();
     }
 
     public void drawEdibles(Graphics2D g2){

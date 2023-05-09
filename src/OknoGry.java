@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 
 public class OknoGry extends JFrame {
     private int width, height;
@@ -28,7 +29,7 @@ public class OknoGry extends JFrame {
         jPanel.setLayout(new GridLayout());
 
         //JPanel jPanel1 = new PoleGry();
-        JTable jTable = new GameBoard(13);
+        JTable jTable = new GameBoard(13,this);
 
         this.getContentPane().add(jTable, BorderLayout.CENTER);
         this.getContentPane().add(jPanel, BorderLayout.PAGE_END);
@@ -37,5 +38,12 @@ public class OknoGry extends JFrame {
         setVisible(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+    public void close(){
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }
+    public void saveScore(){
+        SwingUtilities.invokeLater(()-> new SaveScorePopup(this));
+        //SwingUtilities.invokeLater(()-> new OknoGry());
     }
 }

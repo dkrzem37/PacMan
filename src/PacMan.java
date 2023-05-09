@@ -118,6 +118,12 @@ public class PacMan extends Thing{
                 if (pacRect.intersects(recEnemy)) {
                     OknoGry.lives--;
                     OknoGry.lifeLabel.setText("Lives: " + OknoGry.lives);
+                    if(OknoGry.lives == 0){
+                        gB.checkForGameEnd = true;
+                    }else{
+                        gB.resetBoard();
+                    }
+                    //todo zresetowac plansze i dodac tutaj check czy lives == 0
                 }
             }
 
