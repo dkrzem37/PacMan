@@ -17,10 +17,10 @@ public class PacMan extends Thing{
         }
         //keyHandler = k;
 
-        this.x = 700 / gB.getSize1() + 10;
+        /*this.x = 700 / gB.getSize1() + 10;
         this.y = 700/ gB.getSize1() + 10;
         this.width = 350/ gB.getSize1();
-        this.height = 350/ gB.getSize1();
+        this.height = 350/ gB.getSize1();*/
         if(gB.getSize1()>30){
             this.speed = 1;
         }else{

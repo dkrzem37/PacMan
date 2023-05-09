@@ -12,11 +12,11 @@ public class Enemy extends Thing{
         this.gB = gB;
         this.speed = 3;
         up = true;
-        this.x = 595;
+        /*this.x = 595;
         this.y = 585;
 
         this.height = 700 / gB.getSize1() - 5;
-        this.width = 700/ gB.getSize1() - 5;
+        this.width = 700/ gB.getSize1() - 5;*/
         try {
             enemySprite = ImageIO.read(new File("src/Sprites/EnemySprite.png"));
         }catch (Exception e) {
