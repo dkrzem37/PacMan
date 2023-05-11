@@ -18,6 +18,7 @@ public class HighScores extends JFrame {
 
         ListHighScores highScores = new ListHighScores(wynikiString);
         JList list = new JList();
+        MainMenu.addCtrlShiftQShortcut(list);
         list.setModel(highScores);
 
         JScrollPane jScrollPane = new JScrollPane(list);

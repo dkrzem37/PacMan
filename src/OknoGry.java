@@ -6,20 +6,25 @@ public class OknoGry extends JFrame {
     private int width, height;
     public static int score = 0;
     public static int lives = 3;
+    public static int time = 0;
     public static JLabel scoreLabel;
     public static JLabel timeLabel;
     public static JLabel lifeLabel;
-    public OknoGry(){
-        generateOknoGry();
+    int size;
+    public OknoGry(int size){
+        generateOknoGry(size);
     }
-    public void generateOknoGry(){
+    public void generateOknoGry(int size){
         this.width = 714;
         this.height = 787;
         OknoGry.lives = 3;
         OknoGry.score = 0;
+        OknoGry.time = 0;
         scoreLabel = new JLabel("Score:" + score);
-        timeLabel = new JLabel("Time:");
+        timeLabel = new JLabel("Time:" + time);
         lifeLabel = new JLabel("Lives: " + lives);
+
+
 
         JPanel jPanel = new JPanel();
         jPanel.add(scoreLabel);
@@ -29,7 +34,8 @@ public class OknoGry extends JFrame {
         jPanel.setLayout(new GridLayout());
 
         //JPanel jPanel1 = new PoleGry();
-        JTable jTable = new GameBoard(13,this);
+        JTable jTable = new GameBoard(size,this);
+        MainMenu.addCtrlShiftQShortcut(jTable);
 
         this.getContentPane().add(jTable, BorderLayout.CENTER);
         this.getContentPane().add(jPanel, BorderLayout.PAGE_END);

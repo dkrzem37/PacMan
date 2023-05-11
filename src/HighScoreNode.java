@@ -10,7 +10,7 @@ public class HighScoreNode implements Comparable<HighScoreNode>, Serializable {
 
     @Override
     public String toString() {
-        return  score + " - " + name;
+        return  score + "p - " + name;
     }
 
 

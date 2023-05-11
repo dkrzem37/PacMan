@@ -38,34 +38,36 @@ public class PacMan extends Thing{
         pacMan.setY(pacMan.getY() + pacMan.getVelocityY());*/
         if(up){
             int temp = y;
-            y -= speed;
+            y -= 1;
             if(checkColision())
                 y = temp;
         }else if(down){
             int temp = y;
-            y += speed;
+            y += 1;
             if(checkColision())
                  y = temp;
         }else if(left){
             int temp = x;
-            x -= speed;
+            x -= 1;
             if(checkColision())
                  x = temp;
         }else if(right){
             int temp = x;
-            x += speed;
+            x += 1;
             if(checkColision())
                 x = temp;
         }
         checkEdible();
         checkEnemies();
+        checkUpgrade();
     }
     private boolean checkColision(){
         for(int column = 0; column< gB.getSize1(); column++){
             for(int row = 0; row< gB.getSize1(); row++){
+                Rectangle r = gB.getCellRect(row, column, true);
                 if(gB.getSize1() % 2 == 1) {
                     if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && (column % 2 == 1 || row % 2 == 1))) {
-                        Rectangle r = gB.getCellRect(row, column, true);
+                        //Rectangle r = gB.getCellRect(row, column, true);
                         if(this.x > r.getX() && this.x < r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
                             return true;
                         if(this.x + this.width> r.getX() && this.x + this.width< r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
@@ -77,7 +79,7 @@ public class PacMan extends Thing{
                     }
                 }else{
                     if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1 ) && ((column % 2 == 1 && column < gB.getSize1()/2) || (row % 2 == 1 && row < gB.getSize1()/2) || (column % 2 == 0 && column > (gB.getSize1()/2)) || (row % 2 == 0 && row > (gB.getSize1()/2))))) {
-                        Rectangle r = gB.getCellRect(row, column, true);
+                        //Rectangle r = gB.getCellRect(row, column, true);
                         if(this.x > r.getX() && this.x < r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
                             return true;
                         if(this.x + this.width> r.getX() && this.x + this.width< r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
@@ -123,10 +125,21 @@ public class PacMan extends Thing{
                     }else{
                         gB.resetBoard();
                     }
-                    //todo zresetowac plansze i dodac tutaj check czy lives == 0
                 }
             }
 
+        }
+    }
+    public void checkUpgrade(){
+        Rectangle pacRect = new Rectangle(this.x, this.y, this.width, this.height);
+        for(int i = 0; i< Upgrade.upgrades.size(); i++){
+            if (Upgrade.upgrades.get(i) != null) {
+                Rectangle rec1 = new Rectangle(Upgrade.upgrades.get(i).getX(), Upgrade.upgrades.get(i).getY(), Upgrade.upgrades.get(i).getWidth(), Upgrade.upgrades.get(i).getHeight());
+                if (pacRect.intersects(rec1)) {
+                    Upgrade.upgrades.get(i).effect();
+                    Upgrade.upgrades.remove(i);
+                }
+            }
         }
     }
 
@@ -141,6 +154,7 @@ public class PacMan extends Thing{
     public Image getPacManSprite() {
         return pacManSprite;
     }
+
 
     public int getX() {
         return x;

@@ -9,16 +9,16 @@ public class MainMenu extends JFrame {
         generateMainMenu();
     }
     public void generateMainMenu(){
-
         JPanel jPanel = new JPanel();
+        addCtrlShiftQShortcut(jPanel);
 
         JPanel jPanel1 = new JPanel();
         JButton startButton = new JButton("START");
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                SwingUtilities.invokeLater(()-> new OknoGry());
+                SwingUtilities.invokeLater(()-> new RozmiaryPlanszyPopup());
+                //SwingUtilities.invokeLater(()-> new OknoGry());
             }
         });
         JButton scoresButton = new JButton("HIGH SCORES");
@@ -50,7 +50,9 @@ public class MainMenu extends JFrame {
             public void windowClosing(WindowEvent e) {
                 System.out.println("Hello");
                 //ZAPISZ VECTOR Z HS DO PLIKU
-                FileOutputStream fileOutputStream = null;
+                zapiszWynikiDoPliku("src/highScores.txt");
+
+                /*FileOutputStream fileOutputStream = null;
                 ObjectOutputStream objectOutputStream = null;
 
                 try {
@@ -65,7 +67,7 @@ public class MainMenu extends JFrame {
                     objectOutputStream.close();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
-                }
+                }*/
 
             }
         });
@@ -90,14 +92,49 @@ public class MainMenu extends JFrame {
             System.out.println(e.getMessage());
         }
 
-
         setSize(500, 500);
         setVisible(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+    public static void zapiszWynikiDoPliku(String path){
+        //ZAPISZ VECTOR Z HS DO PLIKU
+        FileOutputStream fileOutputStream = null;
+        ObjectOutputStream objectOutputStream = null;
 
-    private void close(){
+        try {
+            fileOutputStream = new FileOutputStream(path,false);
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+        try {
+            objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(HighScores.wyniki);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        System.out.println("success");
+    }
+
+    public static void addCtrlShiftQShortcut(JComponent jComponent) {
+        //SHORTCUT
+        Action quitAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                MainMenu.zapiszWynikiDoPliku("src/highScores.txt");
+                System.exit(0);
+            }
+        };
+        String command = "c";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK);
+        jComponent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, command);
+        jComponent.getActionMap().put(command, quitAction);
+    }
+
+        private void close(){
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 
     }

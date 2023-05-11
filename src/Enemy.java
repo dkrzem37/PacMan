@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 
-public class Enemy extends Thing{
+public class Enemy extends Thing implements Runnable{
     private boolean isEdible = false;
     public static Enemy[] enemies= new Enemy[4];
     private BufferedImage enemySprite;
@@ -29,23 +29,23 @@ public class Enemy extends Thing{
              setDirection();
         if(up){
             int temp = y;
-            y -= speed;
+            y -= 1;
             if(checkColision()) {
                 y = temp;
             }
         }else if(down){
             int temp = y;
-            y += speed;
+            y += 1;
             if(checkColision())
                 y = temp;
         }else if(left){
             int temp = x;
-            x -= speed;
+            x -= 1;
             if(checkColision())
                 x = temp;
         }else if(right){
             int temp = x;
-            x += speed;
+            x += 1;
             if(checkColision())
                 x = temp;
         }
@@ -174,9 +174,10 @@ public class Enemy extends Thing{
     private boolean checkColision(){
         for(int column = 0; column< gB.getSize1(); column++){
             for(int row = 0; row< gB.getSize1(); row++){
+                Rectangle r = gB.getCellRect(row, column, true);
                 if(gB.getSize1() % 2 == 1) {
                     if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && (column % 2 == 1 || row % 2 == 1))) {
-                        Rectangle r = gB.getCellRect(row, column, true);
+                        //Rectangle r = gB.getCellRect(row, column, true);
                         if(this.x > r.getX() && this.x < r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
                             return true;
                         if(this.x + this.width> r.getX() && this.x + this.width< r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
@@ -188,7 +189,7 @@ public class Enemy extends Thing{
                     }
                 }else{
                     if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1 ) && ((column % 2 == 1 && column < gB.getSize1()/2) || (row % 2 == 1 && row < gB.getSize1()/2) || (column % 2 == 0 && column > (gB.getSize1()/2)) || (row % 2 == 0 && row > (gB.getSize1()/2))))) {
-                        Rectangle r = gB.getCellRect(row, column, true);
+                        //Rectangle r = gB.getCellRect(row, column, true);
                         if(this.x > r.getX() && this.x < r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
                             return true;
                         if(this.x + this.width> r.getX() && this.x + this.width< r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
@@ -214,5 +215,69 @@ public class Enemy extends Thing{
 
     public void setEdible(boolean edible) {
         isEdible = edible;
+    }
+
+    @Override
+    public void run() {
+        int counter = 0;
+        String lock = "a";
+
+        while(!Thread.interrupted()) {
+            /*for(Enemy e: Enemy.enemies) {
+                UpgradeSlow slow = new UpgradeSlow(gB.getPacMan());
+                slow.setHeight(e.getHeight() / 3);
+                slow.setWidth(e.getWidth()/ 3);
+                slow.setX(e.getX() + e.getWidth() / 2 - slow.getWidth() / 2);
+                slow.setY(e.getY() + e.getHeight() / 2 - slow.getHeight() / 2);
+                synchronized (lock) {
+                    Upgrade.upgrades.add(slow);
+                    counter++;
+                    System.out.println(counter);
+                }
+            }*/
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                break;
+            }
+            for (Enemy e : Enemy.enemies) {
+                //Spawn an egg
+                if (Math.random() < 0.25) {
+                    switch ((int) (Math.random() * 2)) {
+                        case 0:
+                            UpgradeSlow slow = new UpgradeSlow(gB.getPacMan(), e);
+                            /*slow.setHeight(e.getHeight() / 3);
+                            slow.setWidth(e.getWidth()/ 3);
+                            slow.setX(e.getX() + e.getWidth() / 2 - slow.getWidth() / 2);
+                            slow.setY(e.getY() + e.getHeight() / 2 - slow.getHeight() / 2);*/
+                            synchronized (lock) {
+                                Upgrade.upgrades.add(slow);
+                                counter++;
+                                System.out.println(counter);
+                            }
+                            break;
+                        case 1:
+                            UpgradeFast fast = new UpgradeFast(gB.getPacMan(), e);
+                            synchronized (lock) {
+                                Upgrade.upgrades.add(fast);
+                            }
+                            break;
+                        case 2:
+                            /*fast = new UpgradeFast(gB.getPacMan(), e);
+                            synchronized (lock) {
+                                Upgrade.upgrades.add(fast);
+                            }*/
+                            break;
+                        case 3:
+                        case 4:
+                            /*fast = new UpgradeFast(gB.getPacMan(), e);
+                            synchronized (lock) {
+                                Upgrade.upgrades.add(fast);
+                            }*/
+                            break;
+                    }
+                }
+            }
+        }
     }
 }
