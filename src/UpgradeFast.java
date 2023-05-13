@@ -3,7 +3,7 @@ import java.io.File;
 
 public class UpgradeFast extends Upgrade{
     public UpgradeFast(PacMan pacMan, Enemy enemy) {
-        super(Type.FAST,pacMan, enemy);
+        super(pacMan, enemy);
         try {
             upgradeSprite = ImageIO.read(new File("src/Sprites/FastUpgrade.png"));
         }catch (Exception e) {

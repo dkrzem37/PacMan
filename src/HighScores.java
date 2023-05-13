@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -20,6 +21,19 @@ public class HighScores extends JFrame {
         JList list = new JList();
         MainMenu.addCtrlShiftQShortcut(list);
         list.setModel(highScores);
+        list.setCellRenderer(new DefaultListCellRenderer() {
+
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                setBackground(Color.BLACK);
+                setForeground(Color.YELLOW);
+                setFont(new Font(Font.MONOSPACED, Font.PLAIN, 28));
+                return c;
+            }
+
+        });
 
         JScrollPane jScrollPane = new JScrollPane(list);
 

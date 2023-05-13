@@ -9,9 +9,8 @@ public class RozmiaryPlanszyPopup extends JDialog {
     public RozmiaryPlanszyPopup(){
 
         this.setTitle("Wybierz rozmiar planszy.");
-        //JDialog d = new JDialog(this, "New Score!");
         this.setLayout(new GridBagLayout());
-        JTextField jTextField = new JTextField("13");
+        JTextField jTextField = new JTextField("15");
         JButton b = new JButton ("OK");
         MainMenu.addCtrlShiftQShortcut(b);
         b.addActionListener(new ActionListener() {
@@ -21,12 +20,10 @@ public class RozmiaryPlanszyPopup extends JDialog {
                 try {
                     size = Integer.parseInt(jTextField.getText());
                 }catch(NumberFormatException ex){
-                    System.out.println(size);
                 }
-                if(size != 0){
+                if(size >= 5 && size <= 100){
                     int finalSize = size;
                     SwingUtilities.invokeLater(()-> new OknoGry(finalSize));
-                    System.out.println("proba");
                     close();
                 }
             }

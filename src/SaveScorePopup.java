@@ -11,9 +11,8 @@ public class SaveScorePopup extends JDialog {
         this.oG = oG;
 
         this.setTitle("New Score!");
-        //JDialog d = new JDialog(this, "New Score!");
         this.setLayout(new GridBagLayout());
-        JTextField jTextField = new JTextField("hello");
+        JTextField jTextField = new JTextField("Your name");
         JButton b = new JButton ("OK");
         MainMenu.addCtrlShiftQShortcut(b);
         b.addActionListener(new ActionListener() {

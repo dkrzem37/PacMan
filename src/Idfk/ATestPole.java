@@ -21,12 +21,12 @@ public class ATestPole extends JFrame implements  Runnable, KeyListener {
 
     public void generatePole(){
 
-        //ImageIcon ii = new ImageIcon("src/Sprites/PacMan.png");
+        //ImageIcon ii = new ImageIcon("src/Sprites/PacManNormal.png");
         //pacManSprite = pacMan.getPacManSprite();
 
         */
 /*try {
-            pacManSprite = ImageIO.read(new File("src/Sprites/PacMan.png"));
+            pacManSprite = ImageIO.read(new File("src/Sprites/PacManNormal.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }*//*
@@ -34,7 +34,7 @@ public class ATestPole extends JFrame implements  Runnable, KeyListener {
 
 
         jLabel = new JLabel();
-        ImageIcon ii = new ImageIcon("src/Sprites/PacMan.png");
+        ImageIcon ii = new ImageIcon("src/Sprites/PacManNormal.png");
         jLabel.setIcon(ii);
 
         addKeyListener(this);

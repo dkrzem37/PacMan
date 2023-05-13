@@ -16,7 +16,6 @@ public class HighScoreNode implements Comparable<HighScoreNode>, Serializable {
 
     @Override
     public int compareTo(HighScoreNode o) {
-        //HighScoreNode temp = (HighScoreNode) o;
         return  o.getScore() - this.getScore();
     }
 

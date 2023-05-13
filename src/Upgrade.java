@@ -5,18 +5,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class Upgrade extends Thing{
-    //public static Upgrade[] upgrades = new Upgrade[5];
-    public static ArrayList<Upgrade> upgrades = new ArrayList<>();
-    public enum Type{
-        SLOW,
-        FAST
-    }
+    public static ArrayList<Upgrade> upgrades;
     PacMan pacMan;
-    Type type;
     BufferedImage upgradeSprite;
     Enemy enemy;
-    public Upgrade(Type type, PacMan pacMan, Enemy enemy) {
-        this.type = type;
+    public Upgrade( PacMan pacMan, Enemy enemy) {
         this.pacMan = pacMan;
         this.enemy = enemy;
         this.setHeight(enemy.getHeight() / 3);

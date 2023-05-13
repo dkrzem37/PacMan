@@ -1,6 +1,8 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
 
@@ -10,18 +12,35 @@ public class MainMenu extends JFrame {
     }
     public void generateMainMenu(){
         JPanel jPanel = new JPanel();
+        jPanel.setBackground(Color.BLACK);
         addCtrlShiftQShortcut(jPanel);
 
+        BufferedImage titleScreen = null;
+        try {
+            titleScreen = ImageIO.read(new File("src/Sprites/titleArt.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        jPanel.add(new JLabel(new ImageIcon(titleScreen.getScaledInstance(500, 500, Image.SCALE_DEFAULT))));
+
+
         JPanel jPanel1 = new JPanel();
+
+        jPanel1.setPreferredSize(new Dimension(500, 50));
         JButton startButton = new JButton("START");
+        startButton.setForeground(Color.YELLOW);
+        startButton.setBackground(Color.BLACK);
+        startButton.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(()-> new RozmiaryPlanszyPopup());
-                //SwingUtilities.invokeLater(()-> new OknoGry());
             }
         });
         JButton scoresButton = new JButton("HIGH SCORES");
+        scoresButton.setForeground(Color.YELLOW);
+        scoresButton.setBackground(Color.BLACK);
+        scoresButton.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
         scoresButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -30,6 +49,9 @@ public class MainMenu extends JFrame {
             }
         });
         JButton exitButton = new JButton("EXIT");
+        exitButton.setForeground(Color.YELLOW);
+        exitButton.setBackground(Color.BLACK);
+        exitButton.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -48,27 +70,8 @@ public class MainMenu extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                System.out.println("Hello");
                 //ZAPISZ VECTOR Z HS DO PLIKU
                 zapiszWynikiDoPliku("src/highScores.txt");
-
-                /*FileOutputStream fileOutputStream = null;
-                ObjectOutputStream objectOutputStream = null;
-
-                try {
-                    fileOutputStream = new FileOutputStream("src/highScores.txt",false);
-                } catch (FileNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
-                    objectOutputStream = new ObjectOutputStream(fileOutputStream);
-                    objectOutputStream.writeObject(HighScores.wyniki);
-                    objectOutputStream.flush();
-                    objectOutputStream.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }*/
-
             }
         });
 
@@ -92,11 +95,12 @@ public class MainMenu extends JFrame {
             System.out.println(e.getMessage());
         }
 
-        setSize(500, 500);
+        setSize(500, 590);
         setVisible(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
     public static void zapiszWynikiDoPliku(String path){
         //ZAPISZ VECTOR Z HS DO PLIKU
         FileOutputStream fileOutputStream = null;
@@ -115,7 +119,6 @@ public class MainMenu extends JFrame {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        System.out.println("success");
     }
 
     public static void addCtrlShiftQShortcut(JComponent jComponent) {

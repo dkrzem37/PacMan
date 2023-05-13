@@ -8,15 +8,15 @@ public class Enemy extends Thing implements Runnable{
     private boolean isEdible = false;
     public static Enemy[] enemies= new Enemy[4];
     private BufferedImage enemySprite;
+    private Thread enemyAnimation;
     public Enemy(GameBoard gB){
         this.gB = gB;
-        this.speed = 3;
+        if(gB.getSize1()>30){
+            this.speed = 2;
+        }else{
+            this.speed = 3;
+        }
         up = true;
-        /*this.x = 595;
-        this.y = 585;
-
-        this.height = 700 / gB.getSize1() - 5;
-        this.width = 700/ gB.getSize1() - 5;*/
         try {
             enemySprite = ImageIO.read(new File("src/Sprites/EnemySprite.png"));
         }catch (Exception e) {
@@ -25,8 +25,7 @@ public class Enemy extends Thing implements Runnable{
     }
 
     public void movement(){
-        if(Math.random()< 0.05)
-             setDirection();
+        setDirection();
         if(up){
             int temp = y;
             y -= 1;
@@ -58,26 +57,11 @@ public class Enemy extends Thing implements Runnable{
         int rand = (int)(Math.random()*4);
         boolean potentialUp, potentialDown,potentialLeft, potentialRight;
         switch(rand){
-            case 0: potentialUp = true;
-                for (int column = 0; column < gB.getSize1(); column++) {
-                    for (int row = 0; row < gB.getSize1(); row++) {
-                        if (gB.getSize1() % 2 == 1) {
-                            if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && (column % 2 == 1 || row % 2 == 1))) {
-                                Rectangle r = gB.getCellRect(row, column, false);
-                                if (enemyRectUp.intersects(r)) {
-                                    potentialUp = false;
-                                }
-                            }
-                        } else {
-                            if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && ((column % 2 == 1 && column < gB.getSize1() / 2) || (row % 2 == 1 && row < gB.getSize1() / 2) || (column % 2 == 0 && column > (gB.getSize1() / 2)) || (row % 2 == 0 && row > (gB.getSize1() / 2))))) {
-                                Rectangle r = gB.getCellRect(row, column, false);
-                                if (enemyRectUp.intersects(r)) {
-                                    potentialUp = false;
-                                }
-                            }
-                        }
-                    }
-                }
+            case 0:
+                if(down)
+                    break;
+                potentialUp = true;
+                potentialUp = changePotentialDir(enemyRectUp);
                 if(potentialUp) {
                     up = potentialUp;
                     left = false;
@@ -85,26 +69,12 @@ public class Enemy extends Thing implements Runnable{
                     right = false;
                 }
                 break;
-            case 1: potentialDown = true;
-                for (int column = 0; column < gB.getSize1(); column++) {
-                    for (int row = 0; row < gB.getSize1(); row++) {
-                        if (gB.getSize1() % 2 == 1) {
-                            if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && (column % 2 == 1 || row % 2 == 1))) {
-                                Rectangle r = gB.getCellRect(row, column, false);
-                                if (enemyRectDown.intersects(r)) {
-                                    potentialDown = false;
-                                }
-                            }
-                        } else {
-                            if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && ((column % 2 == 1 && column < gB.getSize1() / 2) || (row % 2 == 1 && row < gB.getSize1() / 2) || (column % 2 == 0 && column > (gB.getSize1() / 2)) || (row % 2 == 0 && row > (gB.getSize1() / 2))))) {
-                                Rectangle r = gB.getCellRect(row, column, false);
-                                if (enemyRectDown.intersects(r)) {
-                                    potentialDown = false;
-                                }
-                            }
-                        }
-                    }
-                }
+            case 1:
+                if(up)
+                    break;
+                potentialDown = true;
+                potentialDown = changePotentialDir(enemyRectDown);
+
                 if(potentialDown) {
                     down = potentialDown;
                     left = false;
@@ -112,26 +82,12 @@ public class Enemy extends Thing implements Runnable{
                     right = false;
                 }
                 break;
-            case 2: potentialLeft = true;
-                for (int column = 0; column < gB.getSize1(); column++) {
-                    for (int row = 0; row < gB.getSize1(); row++) {
-                        if (gB.getSize1() % 2 == 1) {
-                            if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && (column % 2 == 1 || row % 2 == 1))) {
-                                Rectangle r = gB.getCellRect(row, column, false);
-                                if (enemyRectLeft.intersects(r)) {
-                                    potentialLeft = false;
-                                }
-                            }
-                        } else {
-                            if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && ((column % 2 == 1 && column < gB.getSize1() / 2) || (row % 2 == 1 && row < gB.getSize1() / 2) || (column % 2 == 0 && column > (gB.getSize1() / 2)) || (row % 2 == 0 && row > (gB.getSize1() / 2))))) {
-                                Rectangle r = gB.getCellRect(row, column, false);
-                                if (enemyRectLeft.intersects(r)) {
-                                    potentialLeft = false;
-                                }
-                            }
-                        }
-                    }
-                }
+            case 2:
+                if(right)
+                    break;
+                potentialLeft = true;
+                potentialLeft = changePotentialDir(enemyRectLeft);
+
                 if(potentialLeft) {
                     left = potentialLeft;
                     up = false;
@@ -139,26 +95,12 @@ public class Enemy extends Thing implements Runnable{
                     right = false;
                 }
                 break;
-            case 3: potentialRight = true;
-                for (int column = 0; column < gB.getSize1(); column++) {
-                    for (int row = 0; row < gB.getSize1(); row++) {
-                        if (gB.getSize1() % 2 == 1) {
-                            if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && (column % 2 == 1 || row % 2 == 1))) {
-                                Rectangle r = gB.getCellRect(row, column, false);
-                                if (enemyRectRight.intersects(r)) {
-                                    potentialRight = false;
-                                }
-                            }
-                        } else {
-                            if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && ((column % 2 == 1 && column < gB.getSize1() / 2) || (row % 2 == 1 && row < gB.getSize1() / 2) || (column % 2 == 0 && column > (gB.getSize1() / 2)) || (row % 2 == 0 && row > (gB.getSize1() / 2))))) {
-                                Rectangle r = gB.getCellRect(row, column, false);
-                                if (enemyRectRight.intersects(r)) {
-                                    potentialRight = false;
-                                }
-                            }
-                        }
-                    }
-                }
+            case 3:
+                if(left)
+                    break;
+                potentialRight = true;
+                potentialRight = changePotentialDir(enemyRectRight);
+
                 if(potentialRight) {
                     right = potentialRight;
                     left = false;
@@ -177,7 +119,6 @@ public class Enemy extends Thing implements Runnable{
                 Rectangle r = gB.getCellRect(row, column, true);
                 if(gB.getSize1() % 2 == 1) {
                     if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && (column % 2 == 1 || row % 2 == 1))) {
-                        //Rectangle r = gB.getCellRect(row, column, true);
                         if(this.x > r.getX() && this.x < r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
                             return true;
                         if(this.x + this.width> r.getX() && this.x + this.width< r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
@@ -189,7 +130,6 @@ public class Enemy extends Thing implements Runnable{
                     }
                 }else{
                     if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1 ) && ((column % 2 == 1 && column < gB.getSize1()/2) || (row % 2 == 1 && row < gB.getSize1()/2) || (column % 2 == 0 && column > (gB.getSize1()/2)) || (row % 2 == 0 && row > (gB.getSize1()/2))))) {
-                        //Rectangle r = gB.getCellRect(row, column, true);
                         if(this.x > r.getX() && this.x < r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
                             return true;
                         if(this.x + this.width> r.getX() && this.x + this.width< r.getX() + r.getWidth() && this.y > r.getY() && this.y < r.getY() + r.getHeight())
@@ -223,18 +163,6 @@ public class Enemy extends Thing implements Runnable{
         String lock = "a";
 
         while(!Thread.interrupted()) {
-            /*for(Enemy e: Enemy.enemies) {
-                UpgradeSlow slow = new UpgradeSlow(gB.getPacMan());
-                slow.setHeight(e.getHeight() / 3);
-                slow.setWidth(e.getWidth()/ 3);
-                slow.setX(e.getX() + e.getWidth() / 2 - slow.getWidth() / 2);
-                slow.setY(e.getY() + e.getHeight() / 2 - slow.getHeight() / 2);
-                synchronized (lock) {
-                    Upgrade.upgrades.add(slow);
-                    counter++;
-                    System.out.println(counter);
-                }
-            }*/
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
@@ -243,17 +171,13 @@ public class Enemy extends Thing implements Runnable{
             for (Enemy e : Enemy.enemies) {
                 //Spawn an egg
                 if (Math.random() < 0.25) {
-                    switch ((int) (Math.random() * 2)) {
+                    switch ((int) (Math.random() * 5)) {
                         case 0:
                             UpgradeSlow slow = new UpgradeSlow(gB.getPacMan(), e);
-                            /*slow.setHeight(e.getHeight() / 3);
-                            slow.setWidth(e.getWidth()/ 3);
-                            slow.setX(e.getX() + e.getWidth() / 2 - slow.getWidth() / 2);
-                            slow.setY(e.getY() + e.getHeight() / 2 - slow.getHeight() / 2);*/
                             synchronized (lock) {
                                 Upgrade.upgrades.add(slow);
                                 counter++;
-                                System.out.println(counter);
+                                System.out.println("spawnowanie slow " + counter);
                             }
                             break;
                         case 1:
@@ -263,21 +187,64 @@ public class Enemy extends Thing implements Runnable{
                             }
                             break;
                         case 2:
-                            /*fast = new UpgradeFast(gB.getPacMan(), e);
+                            UpgradeEnemyFast enemyFast = new UpgradeEnemyFast(gB.getPacMan(), e);
                             synchronized (lock) {
-                                Upgrade.upgrades.add(fast);
-                            }*/
+                                Upgrade.upgrades.add(enemyFast);
+                            }
                             break;
                         case 3:
-                        case 4:
-                            /*fast = new UpgradeFast(gB.getPacMan(), e);
+                            UpgradeEnemySlow enemySlow = new UpgradeEnemySlow(gB.getPacMan(), e);
                             synchronized (lock) {
-                                Upgrade.upgrades.add(fast);
-                            }*/
+                                Upgrade.upgrades.add(enemySlow);
+                            }
+                            break;
+                        case 4:
+                            UpgradeGainLife gainLife = new UpgradeGainLife(gB.getPacMan(), e);
+                            synchronized (lock) {
+                                Upgrade.upgrades.add(gainLife);
+                            }
                             break;
                     }
                 }
             }
         }
+    }
+    private boolean changePotentialDir(Rectangle enemyRect){
+        for (int column = 0; column < gB.getSize1(); column++) {
+            for (int row = 0; row < gB.getSize1(); row++) {
+                if (gB.getSize1() % 2 == 1) {
+                    if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && (column % 2 == 1 || row % 2 == 1))) {
+                        Rectangle r = gB.getCellRect(row, column, false);
+                        if (enemyRect.intersects(r)) {
+                            return false;
+                        }
+                    }
+                } else {
+                    if (!((row != 0 && row != gB.getSize1() - 1 && column != 0 && column != gB.getSize1() - 1) && ((column % 2 == 1 && column < gB.getSize1() / 2) || (row % 2 == 1 && row < gB.getSize1() / 2) || (column % 2 == 0 && column > (gB.getSize1() / 2)) || (row % 2 == 0 && row > (gB.getSize1() / 2))))) {
+                        Rectangle r = gB.getCellRect(row, column, false);
+                        if (enemyRect.intersects(r)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public BufferedImage getEnemySprite() {
+        return enemySprite;
+    }
+
+    public void setEnemySprite(BufferedImage enemySprite) {
+        this.enemySprite = enemySprite;
+    }
+
+    public Thread getEnemyAnimation() {
+        return enemyAnimation;
+    }
+
+    public void setEnemyAnimation(Thread enemyAnimation) {
+        this.enemyAnimation = enemyAnimation;
     }
 }

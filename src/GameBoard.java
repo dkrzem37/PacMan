@@ -1,3 +1,4 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
@@ -5,51 +6,43 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class GameBoard extends JTable implements Runnable, KeyListener {
-    private Thread thread, timeCounter, spawningUpgrades;
+    private Thread thread, timeCounter, spawningUpgrades, pacManAnimation;
     private PacMan pacMan;
     private int height, width,size;
     private int numberOfEdibles = 0;
     OknoGry oG;
     public boolean checkForGameEnd;
-
-
+    private BufferedImage countdown;
     public GameBoard(int size, OknoGry oG){
-        super(new PlanszaGry(size));
+
         checkForGameEnd = false;
         this.oG = oG;
+         Upgrade.upgrades = new ArrayList<>();
 
-        /*Action quitAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        };
+        setModel(new PlanszaGry(size));
 
-        String command = "c";
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK);
-        this.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, command);
-        this.getActionMap().put(command, quitAction);*/
-
-        this.width = width;
-        this.height = height;
         this.size = size;
         Edible.edibleArray = new Edible[size][size];
         addEdiblesToArray();
-        //setOpaque(true);
 
+        for(int column = 0; column < size; column++) {
+            this.getColumnModel().getColumn(column).setMinWidth(1);
+            this.getColumnModel().getColumn(column).setPreferredWidth(700/size);
+        }
+        setRowHeight(700/size);
         setShowGrid(false);
         setIntercellSpacing(new Dimension(0, 0));
         setRowMargin(0);
 
-
-
         setDefaultRenderer(Object.class, new GameBoardCellRenderer(this));
-        //setDefaultEditor(Object.class, new GameBoardCellEditor());
-        //this.setPreferredSize(new Dimension(width, height));
-        setRowHeight(700/size);
+
 
         this.addKeyListener(this);
         pacMan = new PacMan( 100, 100, this);
@@ -58,7 +51,10 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
             Enemy.enemies[i] = new Enemy(this);
         }
 
+
+
         this.setFocusable(true);
+
         this.thread = new Thread(this);
         thread.start();
         this.timeCounter = new Thread(new TimeCounter());
@@ -69,6 +65,7 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
 
     @Override
     public void run() {
+
         //THIS WORKS
         /*pacMan.setX(700 / this.getSize1() + 10);
         pacMan.setY(700 / this.getSize1() + 10);
@@ -81,50 +78,111 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
         /*Rectangle r = this.getCellRect(1, 1, true);
         System.out.println("x: " + (int)r.getX());*/
 
-        try{
-            for(int i = 3; i>0; i--) {
-                if(i == 2){
+        try {
+            for (int i = 3; i > 0; i--) {
+                switch (i) {
+                    case 3:
+                        try {
+                            countdown = ImageIO.read(new File("src/Sprites/3.png"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case 2:
+                        try {
+                            countdown = ImageIO.read(new File("src/Sprites/2.png"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case 1:
+                        try {
+                            countdown = ImageIO.read(new File("src/Sprites/1.png"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
+                if (i == 2) {
                     Rectangle r1 = this.getCellRect(1, 1, true);
-                    pacMan.setX((int)r1.getX());
-                    pacMan.setY((int)r1.getY());
-                    System.out.println((int)r1.getX());
-                    System.out.println((int)r1.getY());
+                    pacMan.setX((int) r1.getX());
+                    pacMan.setY((int) r1.getY());
+                    //System.out.println((int)r1.getX());
+                    //System.out.println((int)r1.getY());
                     ///////
-                    pacMan.setHeight((int)r1.getHeight()/3);
-                    pacMan.setWidth((int)r1.getWidth()/3);
-                    /*pacMan.setHeight((int)r1.getHeight() - 2);
-                    pacMan.setWidth((int)r1.getWidth() - 2);*/
-                    Rectangle r2 = this.getCellRect(this.getSize1() -2, this.getSize1() -2, true);
+                    /*pacMan.setHeight((int)r1.getHeight()/3);
+                    pacMan.setWidth((int)r1.getWidth()/3);*/
 
-                    for(int j = 0; j< Enemy.enemies.length; j++){
-                        Enemy.enemies[j].setX((int)r2.getX());
+                    //here good
+                    pacMan.setHeight((int) r1.getHeight() - 1);
+                    pacMan.setWidth((int) r1.getWidth() - 1);
+                    Rectangle r2 = this.getCellRect(this.getSize1() - 2, this.getSize1() - 2, true);
+
+
+                    for (int j = 0; j < Enemy.enemies.length; j++) {
+                        Enemy.enemies[j].setX((int) r2.getX());
                         //System.out.println("x" + (int)r2.getX());
-                        Enemy.enemies[j].setY((int)r2.getY());
-                        Enemy.enemies[j].setHeight((int)r2.getHeight() -2);
-                        Enemy.enemies[j].setWidth((int)r2.getWidth() -2);
+                        Enemy.enemies[j].setY((int) r2.getY());
+                        Enemy.enemies[j].setHeight((int) r2.getHeight() - 1);
+                        Enemy.enemies[j].setWidth((int) r2.getWidth() - 1);
                 /*Enemy.enemies[j].setX((int)r2.getX());
                 Enemy.enemies[j].setY((int)r2.getY() + 1);
                 Enemy.enemies[j].setHeight((int)r2.getHeight() - 2);
                 Enemy.enemies[j].setWidth((int)r2.getWidth() - 2);*/
                     }
-                    repaint();
+                    //repaint();
                 }
+                if(i==1){
+                    for (int j = 0; j < Enemy.enemies.length; j++) {
+                        Enemy.enemies[j].setEnemyAnimation(new EnemyAnimation(Enemy.enemies[j]));
+                        Enemy.enemies[j].getEnemyAnimation().start();
+                    }
+                    pacManAnimation = new PacManAnimation(pacMan);
+                    pacManAnimation.start();
 
-                System.out.println(i);
+                    spawningUpgrades = new Thread(Enemy.enemies[0]);
+                    spawningUpgrades.start();
+                }
+                repaint();
+                System.out.println("Countdown: " + i);
                 Thread.sleep(1000);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
+            System.out.println("flag 1");
             System.out.println(e.getMessage());
+            thread.interrupt();
         }
-        spawningUpgrades = new Thread(Enemy.enemies[0]);
-        spawningUpgrades.start();
+        //System.out.println("Column: " + this.getColumnModel().getColumn(1).getWidth());
+        countdown = null;
+        //if(!Thread.interrupted()) {}
+            /*for (int i = 0; i < Enemy.enemies.length; i++) {
+                Enemy.enemies[i].setEnemyAnimation(new EnemyAnimation(Enemy.enemies[i]));
+                Enemy.enemies[i].getEnemyAnimation().start();
+            }
+            pacManAnimation = new PacManAnimation(pacMan);
+            pacManAnimation.start();
+
+            spawningUpgrades = new Thread(Enemy.enemies[0]);
+            spawningUpgrades.start();*/
+
+
+
+
+        //System.out.println(this.getWidth());
+        //System.out.println(" height: " + this.getHeight());
+
         while(thread != null){ //thread != null
 
+            /*Rectangle r2 = this.getCellRect(this.getSize1() -2, this.getSize1() -2, true);
+            System.out.println(r2.getWidth());
+            System.out.println("Height of cell" + r2.getHeight());*/
+
             if(Thread.interrupted()){
+                /*checkForGameEnd = checkForGameEnd();
                 if(checkForGameEnd){
                     gameEnd();
-                    break;
-                }
+                    //break;
+                }*/
                 break;
             }
 
@@ -132,26 +190,37 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
             //System.out.println("test");
             movement();
             repaint();
+
             try{
                 Thread.sleep(10);
             }catch(InterruptedException e){
+                /*checkForGameEnd = checkForGameEnd();
                 if(checkForGameEnd){
                     gameEnd();
-                    break;
-                }
+                    //break;
+                }*/
+                System.out.println("flag 2");
                 break;
             }
-            setRowHeight(this.getHeight()/size);
+            //todo:solution1
+            /*System.out.println("panel width:" + jPanel.getWidth());
+            System.out.println("panel height:" + jPanel.getHeight());
+            setRowHeight(jPanel.getHeight()/size);
+            for(int column = 0; column < size; column++) {
+                columnModel.getColumn(column).setPreferredWidth(jPanel.getWidth()/size);
+            }*/
+
+
             /*for (int x = 0; x < this.getColumnCount(); ++x) {
                 TableColumn col = this.getColumnModel().getColumn(x);
                 //col.setPreferredWidth(1000);
                 col.setWidth(700/size);
             }*/
-            checkForGameEnd = checkForGameEnd();
+            /*checkForGameEnd = checkForGameEnd();
             if(checkForGameEnd){
                 gameEnd();
                 break;
-            }
+            }*/
         }
     }
 
@@ -160,7 +229,13 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
         /*pacMan.setX(pacMan.getX() + pacMan.getVelocityX());
         pacMan.setY(pacMan.getY() + pacMan.getVelocityY());*/
         for(int i = 0; i< pacMan.getSpeed(); i++) {
+
+            /*if(pacMan.getX()/previousWindowWidth !=  pacMan.getX()/this.getWidth()) {
+                pacMan.setX((pacMan.getX() * this.getWidth()/ previousWindowWidth));
+            }
+            previousWindowWidth = this.getWidth();*/
             pacMan.movement();
+
         }
         for(int i = 0; i< Enemy.enemies.length; i++){
             for(int j = 0; j< Enemy.enemies[i].getSpeed(); j++) {
@@ -175,11 +250,24 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        /*for(int column = 0; column < size; column++) {
+            this.getColumnModel().getColumn(column).setMinWidth(1);
+            this.getColumnModel().getColumn(column).setPreferredWidth(this.getWidth()/size);
+            //this.getColumnModel().getColumn(column).setWidth(7);
+        }*/
+
+        setRowHeight(this.getHeight()/size);
+        /*Rectangle r1 = this.getCellRect(1, 1, false);
+        pacMan.setWidth(this.getColumnModel().getColumn(0).getWidth() - 1);
+        pacMan.setHeight((int)r1.getHeight() - 1);*/
+        //pacMan.setX( (int)r1.getX());
+        //pacMan.setY((int)r1.getY());
+
         drawEdibles(g2);
         for(int i = 0; i< Upgrade.upgrades.size(); i++){
             if(Upgrade.upgrades.get(i) != null) {
                 Upgrade.upgrades.get(i).draw(g2);
-                System.out.println("drawn " + i);
+                //System.out.println("drawn " + i);
             }
         }
         pacMan.draw(g2);
@@ -187,6 +275,9 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
         pacMan.setWidth(this.getWidth()/(2*size));*/
         for(int i = 0; i< Enemy.enemies.length; i++){
             Enemy.enemies[i].draw(g2);
+        }
+        if(countdown != null){
+            g2.drawImage(countdown, this.getHeight()/2 - 25, this.getWidth()/ 2 - 25, 50, 50, null);
         }
 
 
@@ -203,28 +294,28 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
         int key = e.getKeyCode();
         if(key == KeyEvent.VK_W){
             //System.out.println("here");
-            pacMan.up = true;
-            pacMan.left = false;
-            pacMan.down = false;
-            pacMan.right = false;
+            pacMan.potentialUp = true;
+            pacMan.potentialLeft = false;
+            pacMan.potentialDown = false;
+            pacMan.potentialRight = false;
         }
         if(key == KeyEvent.VK_A){
-            pacMan.up = false;
-            pacMan.left = true;
-            pacMan.down = false;
-            pacMan.right = false;
+            pacMan.potentialUp = false;
+            pacMan.potentialLeft = true;
+            pacMan.potentialDown = false;
+            pacMan.potentialRight = false;
         }
         if(key == KeyEvent.VK_S){
-            pacMan.up = false;
-            pacMan.left = false;
-            pacMan.down = true;
-            pacMan.right = false;
+            pacMan.potentialUp = false;
+            pacMan.potentialLeft = false;
+            pacMan.potentialDown = true;
+            pacMan.potentialRight = false;
         }
         if(key == KeyEvent.VK_D){
-            pacMan.up = false;
-            pacMan.left = false;
-            pacMan.down = false;
-            pacMan.right = true;
+            pacMan.potentialUp = false;
+            pacMan.potentialLeft = false;
+            pacMan.potentialDown = false;
+            pacMan.potentialRight = true;
         }
     }
 
@@ -240,22 +331,68 @@ public class GameBoard extends JTable implements Runnable, KeyListener {
         return false;
     }
     public void gameEnd(){
+        //Rectangle r1 = this.getCellRect(1, 1, true);
+        pacMan.setX(-200);
+        pacMan.setY(-200);
+
+        //Rectangle r2 = this.getCellRect(this.getSize1() -2, this.getSize1() -2, true);
+        for(int j = 0; j< Enemy.enemies.length; j++){
+            Enemy.enemies[j].setX(-100);
+            Enemy.enemies[j].setY(-100);
+            /*Enemy.enemies[j].setHeight((int)r2.getHeight() -2);
+            Enemy.enemies[j].setWidth((int)r2.getWidth() -2);*/
+        }
+
         System.out.println("GAME ENDED");
+        if(Enemy.enemies[0].getEnemyAnimation() != null) {
+            for (int i = 0; i < Enemy.enemies.length; i++) {
+                Enemy.enemies[i].getEnemyAnimation().interrupt();
+            }
+        }
+        if(pacManAnimation != null)
+            pacManAnimation.interrupt();
+        if(spawningUpgrades != null)
+            spawningUpgrades.interrupt();
         timeCounter.interrupt();
-        oG.saveScore();
+        thread.interrupt();
+        if(checkForGameEnd)
+            oG.saveScore();
     }
     public void resetBoard(){
-        spawningUpgrades.interrupt();
+        for(int i = 0; i< Enemy.enemies.length; i++){
+            Enemy.enemies[i].getEnemyAnimation().interrupt();
+        }
+        if(pacManAnimation != null)
+            pacManAnimation.interrupt();
+
+        if(spawningUpgrades != null)
+            spawningUpgrades.interrupt();
+
         thread.interrupt();
-        Rectangle r1 = this.getCellRect(1, 1, true);
+
+        /*Rectangle r1 = this.getCellRect(1, 1, true);
         pacMan.setX((int)r1.getX());
-        pacMan.setY((int)r1.getY());
-        Rectangle r2 = this.getCellRect(this.getSize1() -2, this.getSize1() -2, true);
+        pacMan.setY((int)r1.getY());*/
+        pacMan.setX(-200);
+        pacMan.setY(-200);
+        if(this.getSize1()>30){
+            pacMan.speed = 2;
+        }else{
+            pacMan.speed = 3;
+        }
+        //Rectangle r2 = this.getCellRect(this.getSize1() -2, this.getSize1() -2, true);
         for(int j = 0; j< Enemy.enemies.length; j++){
-            Enemy.enemies[j].setX((int)r2.getX());
-            Enemy.enemies[j].setY((int)r2.getY());
-            Enemy.enemies[j].setHeight((int)r2.getHeight() -2);
-            Enemy.enemies[j].setWidth((int)r2.getWidth() -2);
+            /*Enemy.enemies[j].setX((int)r2.getX());
+            Enemy.enemies[j].setY((int)r2.getY());*/
+            Enemy.enemies[j].setX(-100);
+            Enemy.enemies[j].setY(-100);
+            if(this.getSize1()>30){
+                Enemy.enemies[j].setSpeed(2);
+            }else{
+                Enemy.enemies[j].setSpeed(3);
+            }
+            /*Enemy.enemies[j].setHeight((int)r2.getHeight() -2);
+            Enemy.enemies[j].setWidth((int)r2.getWidth() -2);*/
         }
 
         this.thread = new Thread(this);
