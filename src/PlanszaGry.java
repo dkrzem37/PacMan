@@ -3,12 +3,11 @@ import java.util.Vector;
 
 public class PlanszaGry extends AbstractTableModel {
     private Object[][] pola;
-    //private String[] kolumny;
 
-    public PlanszaGry(Object[][] pola){
-        this.pola = pola;
-        //this.kolumny = kolumny;
+    public PlanszaGry(int size){
+        this.pola  = new Object[size][size];
     }
+
     @Override
     public int getRowCount() {
         return pola.length;
